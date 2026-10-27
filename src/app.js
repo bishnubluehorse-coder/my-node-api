@@ -14,7 +14,6 @@ app.use(
     express.static(path.join(process.cwd(), 'uploads'))
 );
 
-
 app.use('/api', userRoutes);
 
 app.use((error, req, res, next) => {
