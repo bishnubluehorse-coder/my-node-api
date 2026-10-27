@@ -30,9 +30,24 @@ const createUser = async (name, file) => {
     }
 };
 
+
+
 const getUsers = async () => UserModel.findAll({ order: [["id", "DESC"]] });
+
+const deleteUser = async (id) => {
+    const user = await UserModel.findByPk(id);
+
+    if (!user) {
+        return null;
+    }
+
+    await user.destroy();
+    return user;
+};
+
 
 module.exports = {
     createUser,
     getUsers,
+    deleteUser,
 };

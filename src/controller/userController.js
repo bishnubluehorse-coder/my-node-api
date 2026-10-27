@@ -20,7 +20,25 @@ const getUsers = asyncHandler(async (req, res) => {
     });
 });
 
+const deleteUser = asyncHandler(async (req, res) => {
+    const user = await userService.deleteUser(req.params.id);
+
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            message: 'User not found'
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: 'User deleted successfully',
+        data: user
+    });
+});
+
 module.exports = {
     createUser,
     getUsers,
+    deleteUser
 };
