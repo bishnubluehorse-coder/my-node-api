@@ -5,6 +5,7 @@ const { uploadImage, validateImage } = require('../middleware/imageUpload');
 
 router.post('/create', uploadImage, validateImage, userController.createUser);
 router.get('/users', userController.getUsers);
-router.delete('/user/:id', userController.deleteUser);
+router.put('/users/:id', uploadImage, validateImage, userController.updateUser);
+router.delete('/users/:id', userController.deleteUser);
 
 module.exports = router;

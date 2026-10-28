@@ -34,20 +34,51 @@ const createUser = async (name, file) => {
 
 const getUsers = async () => UserModel.findAll({ order: [["id", "DESC"]] });
 
-const deleteUser = async (id) => {
-    const user = await UserModel.findByPk(id);
+const updateUser = async (id, name, file) => {
+    try {
+        validateName(name);
+        const user = await findUser(id);
+        const previousImage = user.image;
 
-    if (!user) {
-        return null;
+        await user.update({
+            name: name.trim(),
+            ...(file && {
+                image: `/uploads/users/${file.filename}`,
+                originalImageName: file.originalname,
+            }),
+        });
+
+        if (file && previousImage !== user.image) {
+            await removeStoredImage(previousImage);
+        }
+
+        return user;
+    } catch (error) {
+        if (file?.path) {
+            try {
+                await fs.unlink(file.path);
+            } catch (cleanupError) {
+                if (cleanupError.code !== "ENOENT") {
+                    console.error("Failed to remove uploaded image:", cleanupError);
+                }
+            }
+        }
+
+        throw error;
     }
-
-    await user.destroy();
-    return user;
 };
 
+const deleteUser = async (id) => {
+    const user = await findUser(id);
+    const imagePath = user.image;
+
+    await user.destroy();
+    await removeStoredImage(imagePath);
+};
 
 module.exports = {
     createUser,
     getUsers,
+    updateUser,
     deleteUser,
 };

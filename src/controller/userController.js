@@ -20,25 +20,28 @@ const getUsers = asyncHandler(async (req, res) => {
     });
 });
 
-const deleteUser = asyncHandler(async (req, res) => {
-    const user = await userService.deleteUser(req.params.id);
-
-    if (!user) {
-        return res.status(404).json({
-            success: false,
-            message: 'User not found'
-        });
-    }
+const updateUser = asyncHandler(async (req, res) => {
+    const user = await userService.updateUser(req.params.id, req.body.name, req.file);
 
     res.status(200).json({
-        success: true,
-        message: 'User deleted successfully',
-        data: user
+        code: 200,
+        message: "User updated successfully",
+        data: user,
+    });
+});
+
+const deleteUser = asyncHandler(async (req, res) => {
+    await userService.deleteUser(req.params.id);
+
+    res.status(200).json({
+        code: 200,
+        message: "User deleted successfully",
     });
 });
 
 module.exports = {
     createUser,
     getUsers,
-    deleteUser
+    updateUser,
+    deleteUser,
 };
